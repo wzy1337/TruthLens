@@ -13,7 +13,6 @@ stop_words = set(nltk.corpus.stopwords.words('english'))
 punctuation = set(string.punctuation).union({'`', '-', '``', '–', '“', '’', '”', '•'})
 lemma = WordNetLemmatizer()
 
-nltk.data.path.append(r"C:\Users\andante\AppData\Roaming\nltk_data")
 
 
 def renormalize(probs):
