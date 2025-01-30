@@ -6,14 +6,24 @@ import streamlit.components.v1 as components
 from similar_pdfs import *
 from similar_topics import *
 
+st.title(":bar_chart: Lenstruth")
+
+st.markdown('<style>div.block-container{padding-top:3rem;}</style>', unsafe_allow_html=True)
+
+st.markdown(
+    """
+    Welcome to Truthlens, to proceed upload either a CSV file of links or a CSV file of links
+"""
+)
 # File uploader
-uploaded_file = st.file_uploader(":file_folder: Upload a CSV file", type=["csv"])
-if uploaded_file is not None:
+uploaded_file_pdfs = st.file_uploader(":file_folder: Upload a CSV file for pdfs", type=["csv"],key="pdfs")
+uploaded_file_news = st.file_uploader(":file_folder: Upload a CSV file for news", type=["csv"])
+if uploaded_file_pdfs is not None:
 
     # Read the uploaded CSV file into a DataFrame
     
     # Combine summarized text for those with a common identifier
-    df_combined = csv_to_dataframe(dataset_path=uploaded_file, 
+    df_combined = csv_to_dataframe(dataset_path=uploaded_file_pdfs, 
                                    identifier_colname='PDF Path',
                                    summarized_text_colname='Text'
                                    )
@@ -56,3 +66,5 @@ if uploaded_file is not None:
         components.html(open('topics.html', 'r', encoding='utf-8').read(), width=800, height=600)
     with tab2:
         components.html(open('similarity.html', 'r', encoding='utf-8').read(), width=800, height=600)
+
+
