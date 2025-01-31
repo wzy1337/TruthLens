@@ -1,13 +1,14 @@
 import nltk
-import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import wordnet
 import networkx as nx
-import pandas as pd
 import re
 import string
+from bs4 import BeautifulSoup
+from keybert import KeyBERT
+import requests
 
 stop_words = set(nltk.corpus.stopwords.words('english'))
 punctuation = set(string.punctuation).union({'`', '-', '``', '–', '“', '’', '”', '•'})
@@ -106,9 +107,36 @@ def preprocess_text(text, group_sentences=False, return_string=True):
             return [sentence for sentence in final_token_sentences]
     else:
         return final_token_sentences
+    
+def fetch_webpage_text(url):
+    """
+    Fetch the text content from a webpage
+    """
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        paragraphs = soup.find_all('p')
+        text = ' '.join([para.get_text() for para in paragraphs])
+        return text
+    except requests.RequestException as e:
+        print(f"Error fetching {url}: {e}")
+        return ""
 
 
-def draw_similarity_graph(df_combined, identifier_colname, summarized_text_colname, threshold=0.3, output_file='similar.jpg'):
+
+def extract_topics_from_urls(df, url_colname):
+    """
+    Extract topics from a DataFrame of URLs
+    """
+    kw_model = KeyBERT()
+    df['Text'] = df[url_colname].apply(fetch_webpage_text)
+    df['Text'] = df['Text'].apply(preprocess_text)
+    df['Topics'] = df['Text'].apply(lambda text: [topic for topic, _ in kw_model.extract_keywords(docs=text, keyphrase_ngram_range=(1, 1), use_mmr=True, diversity=0.5)])
+    return df
+
+
+def draw_similarity_graph(df_combined, identifier_colname, summarized_text_colname, threshold=0.3):
     """
     Inputs:
     - df_combined: dataset in dataframe form
@@ -154,3 +182,8 @@ def draw_similarity_graph(df_combined, identifier_colname, summarized_text_colna
 
     return G
   
+
+if __name__ == "__main__":
+    df_urls = "Dataset/news_excerpts_parsed.csv"
+    df_with_topics = extract_topics_from_urls(df_urls, 'Link')
+    print(df_with_topics)
