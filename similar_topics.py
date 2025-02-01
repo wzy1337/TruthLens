@@ -9,29 +9,37 @@ from pyvis.network import Network
 import streamlit.components.v1 as components
 from datetime import timedelta
 
+def extract_topics(text, kw_model):
+
+    # To diversify the results, we use Maximal Margin Relevance (MMR) and diversity of 0.5 
+    topics = kw_model.extract_keywords(
+        docs=text, 
+        keyphrase_ngram_range=(1,1),
+        use_mmr=True,
+        diversity=0.5
+    )
+
+    # returns a list of [topics of (word, importance)] 
+    return topics
+
+
 @st.cache_data(persist=True)
 def draw_summary_graph(dataframe, start_row=1, end_row=50, threshold=0.3):
     """
     Draw graph after extracting keywords from summary
     """
-
-    kw_model = KeyBERT()
     topic_graph = nx.Graph()
+    kw_model = KeyBERT()
+
+    dataframe['Topics'] = dataframe['Text'].apply(lambda text: extract_topics(text, kw_model))
 
     for index, row in dataframe[start_row:end_row].iterrows():
         pdf_name = row['PDF Path']
         
         topic_graph.add_node(pdf_name, group=10, size=20, shape='box')
 
-        # topics, f_topics = topics_extract(row['Text'])
-        # To diversify the results, we use Maximal Margin Relevance (MMR) and diversity of 0.7 
-        topics = kw_model.extract_keywords(
-            docs=row['Text'], 
-            keyphrase_ngram_range=(1,1),
-            use_mmr=True,
-            diversity=0.5
-        )
-
+        topics = row['Topics']
+        
         for topic in topics:
             word, importance = topic
 
@@ -44,6 +52,10 @@ def draw_summary_graph(dataframe, start_row=1, end_row=50, threshold=0.3):
                     weight=importance
                 )
     
+    dataframe['Topics'] = dataframe['Topics'].apply(lambda li: [topic[0] for topic in li])
+
+    dataframe.to_pickle('INTERMEDIATE_DF.pkl')
+
     return topic_graph
 
 def extract_number(pdf_path):

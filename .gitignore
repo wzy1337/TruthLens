@@ -1,1 +1,5 @@
 venv/
+*.pdf
+*.pkl
+**/__pycache__/
+lib/
