@@ -58,7 +58,7 @@ def process_dataframe(df, identifier_colname, summarized_text_colname):
     # Store the filtered DataFrame in the session state
     st.session_state['filtered_df'] = filtered_df
 
-    st.sidebar.header("Choose your filter: ")
+
 
     if not filtered_df.empty:
         st.write(f"Number of documents matching the selected topics: {len(filtered_df)}")
