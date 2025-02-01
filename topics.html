@@ -1,0 +1,250 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 600px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"group": 10, "id": "2.pdf", "label": "2.pdf", "shape": "box", "size": 16}, {"group": 20, "id": "atcs", "label": "atcs", "shape": "dot", "size": 4}, {"group": 20, "id": "kta", "label": "kta", "shape": "dot", "size": 12}, {"group": 20, "id": "finances", "label": "finances", "shape": "dot", "size": 4}, {"group": 20, "id": "misconduct", "label": "misconduct", "shape": "dot", "size": 4}, {"group": 10, "id": "35.pdf", "label": "35.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "45.pdf", "label": "45.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "4.pdf", "label": "4.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "directorate", "label": "directorate", "shape": "dot", "size": 24}, {"group": 20, "id": "evaluation", "label": "evaluation", "shape": "dot", "size": 4}, {"group": 20, "id": "peja", "label": "peja", "shape": "dot", "size": 4}, {"group": 20, "id": "unmik", "label": "unmik", "shape": "dot", "size": 28}, {"group": 20, "id": "airport", "label": "airport", "shape": "dot", "size": 44}, {"group": 10, "id": "5.pdf", "label": "5.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "8.pdf", "label": "8.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "11.pdf", "label": "11.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "31.pdf", "label": "31.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "39.pdf", "label": "39.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "43.pdf", "label": "43.pdf", "shape": "box", "size": 16}, {"group": 10, "id": "9.pdf", "label": "9.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "15.pdf", "label": "15.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "47.pdf", "label": "47.pdf", "shape": "box", "size": 12}, {"group": 20, "id": "kosovo", "label": "kosovo", "shape": "dot", "size": 32}, {"group": 20, "id": "pristina", "label": "pristina", "shape": "dot", "size": 44}, {"group": 10, "id": "36.pdf", "label": "36.pdf", "shape": "box", "size": 16}, {"group": 10, "id": "51.pdf", "label": "51.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "52.pdf", "label": "52.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "14.pdf", "label": "14.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "49.pdf", "label": "49.pdf", "shape": "box", "size": 16}, {"group": 20, "id": "audit", "label": "audit", "shape": "dot", "size": 16}, {"group": 20, "id": "containers", "label": "containers", "shape": "dot", "size": 4}, {"group": 10, "id": "63.pdf", "label": "63.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "10.pdf", "label": "10.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "interoffice", "label": "interoffice", "shape": "dot", "size": 4}, {"group": 20, "id": "memorandum", "label": "memorandum", "shape": "dot", "size": 12}, {"group": 20, "id": "procurement", "label": "procurement", "shape": "dot", "size": 24}, {"group": 20, "id": "interviews", "label": "interviews", "shape": "dot", "size": 4}, {"group": 20, "id": "evaluated", "label": "evaluated", "shape": "dot", "size": 4}, {"group": 10, "id": "38.pdf", "label": "38.pdf", "shape": "box", "size": 16}, {"group": 10, "id": "44.pdf", "label": "44.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "82.pdf", "label": "82.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "pillar", "label": "pillar", "shape": "dot", "size": 8}, {"group": 20, "id": "doti", "label": "doti", "shape": "dot", "size": 12}, {"group": 10, "id": "13.pdf", "label": "13.pdf", "shape": "box", "size": 16}, {"group": 20, "id": "staff", "label": "staff", "shape": "dot", "size": 4}, {"group": 20, "id": "itf", "label": "itf", "shape": "dot", "size": 28}, {"group": 20, "id": "allegedly", "label": "allegedly", "shape": "dot", "size": 8}, {"group": 20, "id": "payment", "label": "payment", "shape": "dot", "size": 4}, {"group": 10, "id": "91.pdf", "label": "91.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "alleged", "label": "alleged", "shape": "dot", "size": 12}, {"group": 10, "id": "27.pdf", "label": "27.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "fraud", "label": "fraud", "shape": "dot", "size": 8}, {"group": 20, "id": "kfor", "label": "kfor", "shape": "dot", "size": 4}, {"group": 20, "id": "handling", "label": "handling", "shape": "dot", "size": 4}, {"group": 10, "id": "16.pdf", "label": "16.pdf", "shape": "box", "size": 16}, {"group": 20, "id": "pdas", "label": "pdas", "shape": "dot", "size": 4}, {"group": 20, "id": "h41", "label": "h41", "shape": "dot", "size": 4}, {"group": 20, "id": "criteria", "label": "criteria", "shape": "dot", "size": 4}, {"group": 20, "id": "logistics", "label": "logistics", "shape": "dot", "size": 4}, {"group": 10, "id": "21.pdf", "label": "21.pdf", "shape": "box", "size": 16}, {"group": 20, "id": "photocopying", "label": "photocopying", "shape": "dot", "size": 4}, {"group": 20, "id": "signatures", "label": "signatures", "shape": "dot", "size": 4}, {"group": 20, "id": "undp", "label": "undp", "shape": "dot", "size": 4}, {"group": 20, "id": "financial", "label": "financial", "shape": "dot", "size": 4}, {"group": 10, "id": "24.pdf", "label": "24.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "ambassador", "label": "ambassador", "shape": "dot", "size": 8}, {"group": 20, "id": "mzumara", "label": "mzumara", "shape": "dot", "size": 4}, {"group": 20, "id": "emails", "label": "emails", "shape": "dot", "size": 4}, {"group": 20, "id": "lusaka", "label": "lusaka", "shape": "dot", "size": 4}, {"group": 20, "id": "negroponte", "label": "negroponte", "shape": "dot", "size": 4}, {"group": 10, "id": "26.pdf", "label": "26.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "payees", "label": "payees", "shape": "dot", "size": 4}, {"group": 20, "id": "acgd", "label": "acgd", "shape": "dot", "size": 4}, {"group": 20, "id": "seychelles", "label": "seychelles", "shape": "dot", "size": 4}, {"group": 20, "id": "discrepancies", "label": "discrepancies", "shape": "dot", "size": 4}, {"group": 20, "id": "investigative", "label": "investigative", "shape": "dot", "size": 4}, {"group": 20, "id": "unep", "label": "unep", "shape": "dot", "size": 4}, {"group": 20, "id": "consultancy", "label": "consultancy", "shape": "dot", "size": 4}, {"group": 20, "id": "oversight", "label": "oversight", "shape": "dot", "size": 4}, {"group": 20, "id": "pcau", "label": "pcau", "shape": "dot", "size": 4}, {"group": 20, "id": "insurance", "label": "insurance", "shape": "dot", "size": 8}, {"group": 20, "id": "iceland", "label": "iceland", "shape": "dot", "size": 4}, {"group": 20, "id": "officers", "label": "officers", "shape": "dot", "size": 4}, {"group": 20, "id": "tender", "label": "tender", "shape": "dot", "size": 4}, {"group": 20, "id": "engineer", "label": "engineer", "shape": "dot", "size": 4}, {"group": 20, "id": "peap", "label": "peap", "shape": "dot", "size": 4}, {"group": 20, "id": "fids", "label": "fids", "shape": "dot", "size": 4}, {"group": 20, "id": "investigation", "label": "investigation", "shape": "dot", "size": 12}, {"group": 10, "id": "60.pdf", "label": "60.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "contract", "label": "contract", "shape": "dot", "size": 4}, {"group": 20, "id": "fees", "label": "fees", "shape": "dot", "size": 4}, {"group": 20, "id": "imprisonment", "label": "imprisonment", "shape": "dot", "size": 4}, {"group": 20, "id": "00", "label": "00", "shape": "dot", "size": 4}, {"group": 20, "id": "interim", "label": "interim", "shape": "dot", "size": 4}, {"group": 20, "id": "unmil", "label": "unmil", "shape": "dot", "size": 8}, {"group": 20, "id": "authority", "label": "authority", "shape": "dot", "size": 4}, {"group": 20, "id": "liberia", "label": "liberia", "shape": "dot", "size": 4}, {"group": 20, "id": "oios", "label": "oios", "shape": "dot", "size": 4}, {"group": 20, "id": "iad1", "label": "iad1", "shape": "dot", "size": 4}, {"group": 20, "id": "congo", "label": "congo", "shape": "dot", "size": 4}, {"group": 20, "id": "fuel", "label": "fuel", "shape": "dot", "size": 4}, {"group": 10, "id": "69.pdf", "label": "69.pdf", "shape": "box", "size": 16}, {"group": 20, "id": "unicef", "label": "unicef", "shape": "dot", "size": 4}, {"group": 20, "id": "unon", "label": "unon", "shape": "dot", "size": 8}, {"group": 20, "id": "fraudulent", "label": "fraudulent", "shape": "dot", "size": 4}, {"group": 20, "id": "nairobi", "label": "nairobi", "shape": "dot", "size": 4}, {"group": 10, "id": "73.pdf", "label": "73.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "recommends", "label": "recommends", "shape": "dot", "size": 4}, {"group": 20, "id": "agencies", "label": "agencies", "shape": "dot", "size": 4}, {"group": 20, "id": "procedures", "label": "procedures", "shape": "dot", "size": 4}, {"group": 20, "id": "refund", "label": "refund", "shape": "dot", "size": 4}, {"group": 20, "id": "dell", "label": "dell", "shape": "dot", "size": 4}, {"group": 20, "id": "pd", "label": "pd", "shape": "dot", "size": 4}, {"group": 20, "id": "itsd", "label": "itsd", "shape": "dot", "size": 4}, {"group": 20, "id": "cits", "label": "cits", "shape": "dot", "size": 4}, {"group": 10, "id": "89.pdf", "label": "89.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "sarkozy", "label": "sarkozy", "shape": "dot", "size": 4}, {"group": 20, "id": "chairman", "label": "chairman", "shape": "dot", "size": 4}, {"group": 20, "id": "diplomatic", "label": "diplomatic", "shape": "dot", "size": 4}, {"group": 20, "id": "pernod", "label": "pernod", "shape": "dot", "size": 4}, {"group": 20, "id": "conflicting", "label": "conflicting", "shape": "dot", "size": 4}, {"group": 20, "id": "subsidiaries", "label": "subsidiaries", "shape": "dot", "size": 4}, {"group": 20, "id": "france", "label": "france", "shape": "dot", "size": 4}, {"group": 20, "id": "levitte", "label": "levitte", "shape": "dot", "size": 4}, {"group": 10, "id": "105.pdf", "label": "105.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "nsa", "label": "nsa", "shape": "dot", "size": 8}, {"group": 20, "id": "emissions", "label": "emissions", "shape": "dot", "size": 12}, {"group": 20, "id": "briefing", "label": "briefing", "shape": "dot", "size": 4}, {"group": 20, "id": "abe", "label": "abe", "shape": "dot", "size": 4}, {"group": 20, "id": "shinzo", "label": "shinzo", "shape": "dot", "size": 4}, {"group": 10, "id": "107.pdf", "label": "107.pdf", "shape": "box", "size": 20}, {"group": 10, "id": "106.pdf", "label": "106.pdf", "shape": "box", "size": 12}, {"group": 20, "id": "sector", "label": "sector", "shape": "dot", "size": 4}, {"group": 20, "id": "japanese", "label": "japanese", "shape": "dot", "size": 8}, {"group": 10, "id": "108.pdf", "label": "108.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "japan", "label": "japan", "shape": "dot", "size": 8}, {"group": 20, "id": "summit", "label": "summit", "shape": "dot", "size": 12}, {"group": 20, "id": "policy", "label": "policy", "shape": "dot", "size": 4}, {"group": 10, "id": "113.pdf", "label": "113.pdf", "shape": "box", "size": 16}, {"group": 10, "id": "114.pdf", "label": "114.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "fisheries", "label": "fisheries", "shape": "dot", "size": 4}, {"group": 20, "id": "importation", "label": "importation", "shape": "dot", "size": 4}, {"group": 20, "id": "alarmed", "label": "alarmed", "shape": "dot", "size": 4}, {"group": 20, "id": "maff", "label": "maff", "shape": "dot", "size": 4}, {"group": 10, "id": "110.pdf", "label": "110.pdf", "shape": "box", "size": 20}, {"group": 20, "id": "negotiations", "label": "negotiations", "shape": "dot", "size": 8}, {"group": 20, "id": "eu", "label": "eu", "shape": "dot", "size": 4}, {"group": 20, "id": "supports", "label": "supports", "shape": "dot", "size": 4}, {"group": 20, "id": "billion", "label": "billion", "shape": "dot", "size": 4}, {"group": 20, "id": "agriculture", "label": "agriculture", "shape": "dot", "size": 4}, {"group": 10, "id": "112.pdf", "label": "112.pdf", "shape": "box", "size": 16}, {"group": 10, "id": "111.pdf", "label": "111.pdf", "shape": "box", "size": 12}, {"group": 20, "id": "silvio", "label": "silvio", "shape": "dot", "size": 4}, {"group": 20, "id": "berlusconi", "label": "berlusconi", "shape": "dot", "size": 8}, {"group": 20, "id": "debt", "label": "debt", "shape": "dot", "size": 4}, {"group": 20, "id": "netanyahu", "label": "netanyahu", "shape": "dot", "size": 4}, {"group": 20, "id": "jerusalem", "label": "jerusalem", "shape": "dot", "size": 4}, {"group": 20, "id": "climate", "label": "climate", "shape": "dot", "size": 8}, {"group": 20, "id": "heiligendamm", "label": "heiligendamm", "shape": "dot", "size": 4}, {"group": 20, "id": "merkel", "label": "merkel", "shape": "dot", "size": 4}, {"group": 20, "id": "ban", "label": "ban", "shape": "dot", "size": 4}, {"group": 20, "id": "unsyg", "label": "unsyg", "shape": "dot", "size": 4}]);
+                  edges = new vis.DataSet([{"from": "2.pdf", "to": "atcs", "width": 0.3809}, {"from": "2.pdf", "to": "kta", "width": 0.2894}, {"from": "2.pdf", "to": "finances", "width": 0.2874}, {"from": "2.pdf", "to": "misconduct", "width": 0.2695}, {"from": "kta", "to": "35.pdf", "width": 0.3185}, {"from": "kta", "to": "45.pdf", "width": 0.3559}, {"from": "4.pdf", "to": "directorate", "width": 0.345}, {"from": "4.pdf", "to": "evaluation", "width": 0.3411}, {"from": "4.pdf", "to": "peja", "width": 0.3377}, {"from": "4.pdf", "to": "unmik", "width": 0.272}, {"from": "4.pdf", "to": "airport", "width": 0.2409}, {"from": "directorate", "to": "5.pdf", "width": 0.2856}, {"from": "directorate", "to": "8.pdf", "width": 0.2856}, {"from": "directorate", "to": "11.pdf", "width": 0.3594}, {"from": "directorate", "to": "31.pdf", "width": 0.3517}, {"from": "directorate", "to": "39.pdf", "width": 0.3479}, {"from": "unmik", "to": "5.pdf", "width": 0.3369}, {"from": "unmik", "to": "8.pdf", "width": 0.3369}, {"from": "unmik", "to": "11.pdf", "width": 0.2859}, {"from": "unmik", "to": "31.pdf", "width": 0.2874}, {"from": "unmik", "to": "39.pdf", "width": 0.3221}, {"from": "unmik", "to": "43.pdf", "width": 0.331}, {"from": "airport", "to": "5.pdf", "width": 0.3517}, {"from": "airport", "to": "8.pdf", "width": 0.3517}, {"from": "airport", "to": "9.pdf", "width": 0.3776}, {"from": "airport", "to": "11.pdf", "width": 0.3919}, {"from": "airport", "to": "15.pdf", "width": 0.3023}, {"from": "airport", "to": "31.pdf", "width": 0.3926}, {"from": "airport", "to": "39.pdf", "width": 0.3682}, {"from": "airport", "to": "43.pdf", "width": 0.3392}, {"from": "airport", "to": "45.pdf", "width": 0.2748}, {"from": "airport", "to": "47.pdf", "width": 0.3765}, {"from": "5.pdf", "to": "kosovo", "width": 0.4399}, {"from": "5.pdf", "to": "pristina", "width": 0.4044}, {"from": "kosovo", "to": "8.pdf", "width": 0.4399}, {"from": "kosovo", "to": "9.pdf", "width": 0.2842}, {"from": "kosovo", "to": "36.pdf", "width": 0.3004}, {"from": "kosovo", "to": "43.pdf", "width": 0.4434}, {"from": "kosovo", "to": "45.pdf", "width": 0.2555}, {"from": "kosovo", "to": "51.pdf", "width": 0.4319}, {"from": "kosovo", "to": "52.pdf", "width": 0.4864}, {"from": "pristina", "to": "8.pdf", "width": 0.4044}, {"from": "pristina", "to": "9.pdf", "width": 0.4979}, {"from": "pristina", "to": "14.pdf", "width": 0.2734}, {"from": "pristina", "to": "15.pdf", "width": 0.3841}, {"from": "pristina", "to": "36.pdf", "width": 0.3095}, {"from": "pristina", "to": "43.pdf", "width": 0.42}, {"from": "pristina", "to": "45.pdf", "width": 0.4253}, {"from": "pristina", "to": "47.pdf", "width": 0.4148}, {"from": "pristina", "to": "49.pdf", "width": 0.3032}, {"from": "pristina", "to": "52.pdf", "width": 0.2906}, {"from": "9.pdf", "to": "audit", "width": 0.3195}, {"from": "9.pdf", "to": "containers", "width": 0.27}, {"from": "audit", "to": "14.pdf", "width": 0.3285}, {"from": "audit", "to": "52.pdf", "width": 0.3379}, {"from": "audit", "to": "63.pdf", "width": 0.2087}, {"from": "10.pdf", "to": "interoffice", "width": 0.379}, {"from": "10.pdf", "to": "memorandum", "width": 0.3747}, {"from": "10.pdf", "to": "procurement", "width": 0.2923}, {"from": "10.pdf", "to": "interviews", "width": 0.2741}, {"from": "10.pdf", "to": "evaluated", "width": 0.256}, {"from": "memorandum", "to": "14.pdf", "width": 0.2859}, {"from": "memorandum", "to": "49.pdf", "width": 0.2614}, {"from": "procurement", "to": "14.pdf", "width": 0.403}, {"from": "procurement", "to": "35.pdf", "width": 0.3068}, {"from": "procurement", "to": "38.pdf", "width": 0.5493}, {"from": "procurement", "to": "44.pdf", "width": 0.4892}, {"from": "procurement", "to": "82.pdf", "width": 0.3827}, {"from": "11.pdf", "to": "pillar", "width": 0.3194}, {"from": "11.pdf", "to": "doti", "width": 0.2965}, {"from": "pillar", "to": "31.pdf", "width": 0.3098}, {"from": "doti", "to": "31.pdf", "width": 0.2897}, {"from": "doti", "to": "39.pdf", "width": 0.3391}, {"from": "13.pdf", "to": "staff", "width": 0.3704}, {"from": "13.pdf", "to": "itf", "width": 0.2971}, {"from": "13.pdf", "to": "allegedly", "width": 0.2862}, {"from": "13.pdf", "to": "payment", "width": 0.2071}, {"from": "itf", "to": "35.pdf", "width": 0.2968}, {"from": "itf", "to": "36.pdf", "width": 0.2658}, {"from": "itf", "to": "44.pdf", "width": 0.3313}, {"from": "itf", "to": "49.pdf", "width": 0.3526}, {"from": "itf", "to": "51.pdf", "width": 0.2894}, {"from": "itf", "to": "52.pdf", "width": 0.2943}, {"from": "allegedly", "to": "91.pdf", "width": 0.2009}, {"from": "14.pdf", "to": "alleged", "width": 0.2999}, {"from": "alleged", "to": "27.pdf", "width": 0.355}, {"from": "alleged", "to": "38.pdf", "width": 0.2321}, {"from": "15.pdf", "to": "fraud", "width": 0.3466}, {"from": "15.pdf", "to": "kfor", "width": 0.2829}, {"from": "15.pdf", "to": "handling", "width": 0.2616}, {"from": "fraud", "to": "51.pdf", "width": 0.3916}, {"from": "16.pdf", "to": "pdas", "width": 0.3533}, {"from": "16.pdf", "to": "h41", "width": 0.3394}, {"from": "16.pdf", "to": "criteria", "width": 0.3061}, {"from": "16.pdf", "to": "logistics", "width": 0.2631}, {"from": "21.pdf", "to": "photocopying", "width": 0.393}, {"from": "21.pdf", "to": "signatures", "width": 0.3501}, {"from": "21.pdf", "to": "undp", "width": 0.3289}, {"from": "21.pdf", "to": "financial", "width": 0.2868}, {"from": "24.pdf", "to": "ambassador", "width": 0.4579}, {"from": "24.pdf", "to": "mzumara", "width": 0.4119}, {"from": "24.pdf", "to": "emails", "width": 0.3484}, {"from": "24.pdf", "to": "lusaka", "width": 0.3256}, {"from": "24.pdf", "to": "negroponte", "width": 0.2683}, {"from": "ambassador", "to": "91.pdf", "width": 0.3496}, {"from": "26.pdf", "to": "payees", "width": 0.3588}, {"from": "26.pdf", "to": "acgd", "width": 0.3506}, {"from": "26.pdf", "to": "seychelles", "width": 0.3027}, {"from": "26.pdf", "to": "discrepancies", "width": 0.2892}, {"from": "26.pdf", "to": "investigative", "width": 0.2446}, {"from": "27.pdf", "to": "unep", "width": 0.4203}, {"from": "27.pdf", "to": "consultancy", "width": 0.384}, {"from": "27.pdf", "to": "oversight", "width": 0.3194}, {"from": "27.pdf", "to": "pcau", "width": 0.3126}, {"from": "35.pdf", "to": "insurance", "width": 0.4302}, {"from": "35.pdf", "to": "iceland", "width": 0.2052}, {"from": "insurance", "to": "36.pdf", "width": 0.4093}, {"from": "38.pdf", "to": "officers", "width": 0.2814}, {"from": "38.pdf", "to": "tender", "width": 0.2574}, {"from": "39.pdf", "to": "engineer", "width": 0.3251}, {"from": "44.pdf", "to": "peap", "width": 0.3422}, {"from": "44.pdf", "to": "fids", "width": 0.3046}, {"from": "44.pdf", "to": "investigation", "width": 0.2609}, {"from": "investigation", "to": "49.pdf", "width": 0.3782}, {"from": "investigation", "to": "60.pdf", "width": 0.398}, {"from": "45.pdf", "to": "contract", "width": 0.2549}, {"from": "47.pdf", "to": "fees", "width": 0.3464}, {"from": "51.pdf", "to": "imprisonment", "width": 0.366}, {"from": "51.pdf", "to": "00", "width": 0.2136}, {"from": "52.pdf", "to": "interim", "width": 0.2653}, {"from": "60.pdf", "to": "unmil", "width": 0.4398}, {"from": "60.pdf", "to": "authority", "width": 0.4127}, {"from": "60.pdf", "to": "liberia", "width": 0.3778}, {"from": "60.pdf", "to": "oios", "width": 0.3031}, {"from": "unmil", "to": "63.pdf", "width": 0.4339}, {"from": "63.pdf", "to": "iad1", "width": 0.2734}, {"from": "63.pdf", "to": "congo", "width": 0.2366}, {"from": "63.pdf", "to": "fuel", "width": 0.2364}, {"from": "69.pdf", "to": "unicef", "width": 0.4702}, {"from": "69.pdf", "to": "unon", "width": 0.4289}, {"from": "69.pdf", "to": "fraudulent", "width": 0.3649}, {"from": "69.pdf", "to": "nairobi", "width": 0.3586}, {"from": "unon", "to": "73.pdf", "width": 0.482}, {"from": "73.pdf", "to": "recommends", "width": 0.3362}, {"from": "73.pdf", "to": "agencies", "width": 0.2973}, {"from": "73.pdf", "to": "procedures", "width": 0.2689}, {"from": "73.pdf", "to": "refund", "width": 0.232}, {"from": "82.pdf", "to": "dell", "width": 0.4221}, {"from": "82.pdf", "to": "pd", "width": 0.3627}, {"from": "82.pdf", "to": "itsd", "width": 0.3366}, {"from": "82.pdf", "to": "cits", "width": 0.2863}, {"from": "89.pdf", "to": "sarkozy", "width": 0.4128}, {"from": "89.pdf", "to": "chairman", "width": 0.3411}, {"from": "89.pdf", "to": "diplomatic", "width": 0.3118}, {"from": "89.pdf", "to": "pernod", "width": 0.2595}, {"from": "89.pdf", "to": "conflicting", "width": 0.2291}, {"from": "91.pdf", "to": "subsidiaries", "width": 0.36}, {"from": "91.pdf", "to": "france", "width": 0.3008}, {"from": "91.pdf", "to": "levitte", "width": 0.2995}, {"from": "105.pdf", "to": "nsa", "width": 0.331}, {"from": "105.pdf", "to": "emissions", "width": 0.3187}, {"from": "105.pdf", "to": "briefing", "width": 0.2999}, {"from": "105.pdf", "to": "abe", "width": 0.2982}, {"from": "105.pdf", "to": "shinzo", "width": 0.2664}, {"from": "nsa", "to": "107.pdf", "width": 0.2487}, {"from": "emissions", "to": "106.pdf", "width": 0.3675}, {"from": "emissions", "to": "107.pdf", "width": 0.3257}, {"from": "106.pdf", "to": "sector", "width": 0.4743}, {"from": "106.pdf", "to": "japanese", "width": 0.2514}, {"from": "japanese", "to": "108.pdf", "width": 0.276}, {"from": "107.pdf", "to": "japan", "width": 0.3826}, {"from": "107.pdf", "to": "summit", "width": 0.314}, {"from": "107.pdf", "to": "policy", "width": 0.2358}, {"from": "japan", "to": "113.pdf", "width": 0.3755}, {"from": "summit", "to": "113.pdf", "width": 0.2878}, {"from": "summit", "to": "114.pdf", "width": 0.2933}, {"from": "108.pdf", "to": "fisheries", "width": 0.3245}, {"from": "108.pdf", "to": "importation", "width": 0.3077}, {"from": "108.pdf", "to": "alarmed", "width": 0.285}, {"from": "108.pdf", "to": "maff", "width": 0.2492}, {"from": "110.pdf", "to": "negotiations", "width": 0.4408}, {"from": "110.pdf", "to": "eu", "width": 0.3706}, {"from": "110.pdf", "to": "supports", "width": 0.2607}, {"from": "110.pdf", "to": "billion", "width": 0.2109}, {"from": "110.pdf", "to": "agriculture", "width": 0.2094}, {"from": "negotiations", "to": "112.pdf", "width": 0.2838}, {"from": "111.pdf", "to": "silvio", "width": 0.4917}, {"from": "111.pdf", "to": "berlusconi", "width": 0.3863}, {"from": "111.pdf", "to": "debt", "width": 0.3025}, {"from": "berlusconi", "to": "112.pdf", "width": 0.2756}, {"from": "112.pdf", "to": "netanyahu", "width": 0.4549}, {"from": "112.pdf", "to": "jerusalem", "width": 0.325}, {"from": "113.pdf", "to": "climate", "width": 0.3105}, {"from": "113.pdf", "to": "heiligendamm", "width": 0.298}, {"from": "climate", "to": "114.pdf", "width": 0.2528}, {"from": "114.pdf", "to": "merkel", "width": 0.4082}, {"from": "114.pdf", "to": "ban", "width": 0.2764}, {"from": "114.pdf", "to": "unsyg", "width": 0.2187}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
