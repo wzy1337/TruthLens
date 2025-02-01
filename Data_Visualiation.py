@@ -37,7 +37,8 @@ def process_dataframe(df, identifier_colname, summarized_text_colname):
         except ValueError:
             return []
 
-    if 'Topics' not in df.columns:
+    if 'all_topics' not in st.session_state:
+    # if 'Topics' not in df.columns:
         df['Topics'] = df[summarized_text_colname].apply(extract_topics)
         for topics in df['Topics']:
             all_topics.update(topics)
@@ -123,22 +124,21 @@ def fetch_webpage_text(url):
         print(f"Error fetching {url}: {e}")
         return ""
 
-def preprocess_text(text):
-    """
-    Preprocess the text by removing unwanted characters, extra spaces, etc.
-    """
-    # Example preprocessing steps (you can customize this as needed)
-    text = text.replace('\n', ' ')
-    text = text.replace('\r', ' ')
-    text = ' '.join(text.split())
-    return text
+# def preprocess_text(text):
+#     """
+#     Preprocess the text by removing unwanted characters, extra spaces, etc.
+#     """
+#     text = text.replace('\n', ' ')
+#     text = text.replace('\r', ' ')
+#     text = ' '.join(text.split())
+#     return text
 
 def extract_topics_from_urls(df, url_colname):
     """
     Extract topics from a DataFrame of URLs
     """
     kw_model = KeyBERT()
-    df['Text'] = df[url_colname].apply(fetch_webpage_text)
+    # df['Text'] = df[url_colname].apply(fetch_webpage_text)
     df['Text'] = df['Text'].apply(preprocess_text)
     df['Topics'] = df['Text'].apply(lambda text: [topic for topic, _ in kw_model.extract_keywords(docs=text, keyphrase_ngram_range=(1, 1), use_mmr=True, diversity=0.5)])
     return df

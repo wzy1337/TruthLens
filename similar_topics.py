@@ -8,6 +8,8 @@ import re
 from pyvis.network import Network
 import streamlit.components.v1 as components
 from datetime import timedelta
+from urllib.parse import urlparse
+
 
 def extract_topics(text, kw_model):
 
@@ -22,6 +24,27 @@ def extract_topics(text, kw_model):
     # returns a list of [topics of (word, importance)] 
     return topics
 
+def extract_title_from_url(url):
+    """
+    Extract the Title from a given News URL
+    """
+    to_ignore = ['index.html', '']
+
+    parsed_url = urlparse(url)
+    path_segments = parsed_url.path.split('/')
+
+    filtered_segments = [segment for segment in path_segments]
+    
+    subsegments = []
+    for seg in filtered_segments:
+        subsegments.extend(seg.split("-"))
+
+    # Filter out empty segments and segments that are numbers
+    filtered_segments = [segment for segment in subsegments if not segment.isdigit() and segment not in to_ignore]
+
+    # Join the segments with spaces and capitalize each word
+    title = ' '.join(filtered_segments).title()
+    return title
 
 @st.cache_data(persist=True)
 def draw_summary_graph(dataframe, start_row=1, end_row=50, threshold=0.3):
@@ -34,7 +57,10 @@ def draw_summary_graph(dataframe, start_row=1, end_row=50, threshold=0.3):
     dataframe['Topics'] = dataframe['Text'].apply(lambda text: extract_topics(text, kw_model))
 
     for index, row in dataframe[start_row:end_row].iterrows():
-        pdf_name = row['PDF Path']
+        if 'PDF Path' in row.keys():
+            pdf_name = row['PDF Path']
+        else: # use link identifier
+            pdf_name = extract_title_from_url(row['Link'])
         
         topic_graph.add_node(pdf_name, group=10, size=20, shape='box')
 
@@ -54,8 +80,8 @@ def draw_summary_graph(dataframe, start_row=1, end_row=50, threshold=0.3):
     
     dataframe['Topics'] = dataframe['Topics'].apply(lambda li: [topic[0] for topic in li])
 
-    dataframe.to_pickle('INTERMEDIATE_DF.pkl')
-
+    dataframe.to_pickle("./INTERMEDIATE_DF.pkl")
+    print("PICKLED DATA")
     return topic_graph
 
 def extract_number(pdf_path):

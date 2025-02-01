@@ -47,14 +47,17 @@ def calculate_credibility(row, topics_freq):
     credibility += word_count * 0.01
 
     # Credibility based on recentness
-    creation_date = row['CreationDate']
+    try:
+        creation_date = row['CreationDate']
 
-    if creation_date is not None:
-        today = datetime.today()
+        if creation_date is not None:
+            today = datetime.today()
 
-        date_difference = (today - datetime.strptime(creation_date, '%Y%m%d')).days
-        # the smaller the date difference, the larger the score
-        credibility += (1/date_difference) * 100 
+            date_difference = (today - datetime.strptime(creation_date, '%Y%m%d')).days
+            # the smaller the date difference, the larger the score
+            credibility += (1/date_difference) * 100 
+    except KeyError:
+        pass
 
     return round(credibility, ndigits=2)
 
@@ -70,7 +73,8 @@ def extract_metrics(dataframe):
 
     dataframe['WordCount'] = dataframe['Text'].apply(word_count)
 
-    dataframe['CreationDate'] = dataframe['PDF Path'].apply(extract_creation_date)
+    if 'PDF Path' in dataframe.columns:
+        dataframe['CreationDate'] = dataframe['PDF Path'].apply(extract_creation_date)
 
     dataframe['Credibility'] = dataframe.apply(lambda row: calculate_credibility(row, topics_freq), axis=1)
     for index, row in dataframe.iterrows():
@@ -79,14 +83,24 @@ def extract_metrics(dataframe):
     return dataframe
 
 def filter_and_sort_df(df, input_topics):
+    """
+    Extracts Dataframe topics which correspond to user input
+
+    If sufficient topics is found which correspond to the user input, 
+    search through text corpus to find articles which correspond to topics
+
+    Returns dataframe in terms of credibility
+    """
     # Filter df to rows where the topics contain any of the input topics
     filtered_df = df[
         df['Topics'].apply(lambda topics: any(topic in topics for topic in input_topics)) 
     ]
+
     # Sort df by credibility
-    filtered_df = filtered_df.sort_values(by='Credibility', ascending=False)
+    result = filtered_df.sort_values(by='Credibility', ascending=False)
     
-    if len(filtered_df) < 5:
+    # If insufficient results, search through the text as well
+    if len(result) < 5:
         filtered_text_df = df[
         df['Text'].apply(lambda text: any(topic in text.lower() for topic in input_topics))
         ] 
@@ -94,9 +108,11 @@ def filter_and_sort_df(df, input_topics):
 
         result = pd.concat([filtered_df, filtered_text_df])
         
-        return result[['PDF Path', 'Credibility', 'Topics', 'CreationDate', 'Text']]
+
+    if 'PDF Path' in df.columns:
+        return result[['PDF Path', 'Credibility', 'Topics', 'CreationDate', 'Text']] 
     else:
-        return filtered_df[['PDF Path', 'Credibility', 'Topics', 'CreationDate', 'Text']] 
+        return result[['Link', 'Credibility', 'Topics', 'Text']]
 
 
 # Check if the DataFrame is in the session state
