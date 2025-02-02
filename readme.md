@@ -74,9 +74,10 @@ Lastly 😊:
 Run `venv\Scripts\activate`
 Run `streamlit run Data_Visualisation.py`
 
-###First Page
+### First Page
 ![First page](images\Upload-files.png)
-
+### Second Page
+![Second Page](images\Second-page.png)
 
 
 ## Troubleshooting
