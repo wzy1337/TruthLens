@@ -1,8 +1,3 @@
----
-title: readme
-
----
-
 # What is Truthlens
 
 Truthlens is an analytic tool that allows users to upload a large dataset (in `csv` format). Users provide a dataset which they hope to analyse, which our application then uses for analysis - generating a credibility score and a visualisation of the topics and lexical similarities of the documents via a network graph.
@@ -79,7 +74,8 @@ Lastly 😊:
 Run `venv\Scripts\activate`
 Run `streamlit run Data_Visualisation.py`
 
-
+###First Page
+![First page](images\Upload files.png)
 
 
 
