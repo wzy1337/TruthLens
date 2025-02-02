@@ -58,7 +58,7 @@ def process_dataframe(df, identifier_colname, summarized_text_colname):
     # Store the filtered DataFrame in the session state
     st.session_state['filtered_df'] = filtered_df
 
-    st.sidebar.header("Choose your filter: ")
+
 
     if not filtered_df.empty:
         st.write(f"Number of documents matching the selected topics: {len(filtered_df)}")
@@ -66,6 +66,11 @@ def process_dataframe(df, identifier_colname, summarized_text_colname):
         if len(filtered_df) == 1:
             st.write("Only one document matches the selected topics.")
             st.write(filtered_df.iloc[0])
+        elif len(filtered_df) >=50:
+            st.write("List of matching documents:")
+            st.write("Only the first 50 documents are showed here")
+            doc_list = ", ".join(filtered_df[identifier_colname].head(50).tolist())
+            st.write(doc_list)
         else:
             st.write("List of matching documents:")
             doc_list = ", ".join(filtered_df[identifier_colname].tolist())
