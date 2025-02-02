@@ -75,7 +75,7 @@ Run `venv\Scripts\activate`
 Run `streamlit run Data_Visualisation.py`
 
 ###First Page
-![First page](images\Upload files.png)
+![First page](images\Upload-files.png)
 
 
 
