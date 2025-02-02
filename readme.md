@@ -75,9 +75,9 @@ Run `venv\Scripts\activate`
 Run `streamlit run Data_Visualisation.py`
 
 ### First Page
-![First page](images\Upload-files.png)
+![First page](https://github.com/wzy1337/TruthLens/blob/similarity_function/images/Upload-files.png?raw=true)
 ### Second Page
-![Second Page](images\Second-page.png)
+![Second Page](https://github.com/wzy1337/TruthLens/blob/similarity_function/images/Second-page.png?raw=true)
 
 
 ## Troubleshooting
